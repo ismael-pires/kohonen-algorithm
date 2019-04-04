@@ -5,7 +5,16 @@ import random
 
 
 class Kohonen:
+
+    """
+
+    """
     weigths = []
+    decrease = True
+    neighborhood = 1
+    max_clusters = 2
+    max_interaction = 2
+    learning_rate = 0.98
 
     def __init__(self):
         pass
