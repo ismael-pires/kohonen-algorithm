@@ -20,33 +20,25 @@ class Kohonen:
         pass
 
     @classmethod
-    def training(cls, _input, _weigths=None, _max_clusters=2, _max_interactions=1, _neighborhood=0, _learning_rate=0.5,
-                 _decrease=False, _output="FULL"):
+    def training(cls, _params):
         """
         Método de processamento do algoritmo de Kohonen
-        :param _input:              Lista de entrada
-        :param _weigths:            Matriz de pesos
-        :param _max_clusters:       Número máximo de clusters
-        :param _neighborhood:       Número do raio(vizinhança)
-        :param _learning_rate:      Taxa de aprendizado (Valor entre 0 e 1). Controla a rapidez com que as mudanças nos pesos são feitas)
-        :param _decrease            Efetua decrésimo da taxa de aprendizado gradativamente
-        :param _output              Tipo de Valores exibidos em cada grupo formado (FULL/KEYS/VALUES)
-        :param _max_interactions:   Número máximo de interações
+        :param _params:        Dicionário de dados
         :return:
         """
 
-        if _weigths is not None:
-            cls.weigths = _weigths
+        print(_params)
+        exit(0)
 
         # Definindo a matriz de pesos
-        if cls.set_weigths(_input, _max_clusters):
+        if cls.set_weigths(_params['input'], _params['max_clusters']):
             print("Definição da matrix de pesos realizada com sucesso!")
 
-        # print "\nMatriz de pesos:"
-        # print "--------------------------------------------------------"
-        # for item in cls.weigths:
-        #     print item
-        # print "--------------------------------------------------------\n"
+        print("\nMatriz de pesos:")
+        print("--------------------------------------------------------")
+        for item in cls.weigths:
+            print(item)
+        print("--------------------------------------------------------\n")
 
         count = 1
         clusters = {}
@@ -134,7 +126,7 @@ class Kohonen:
         return clusters
 
     @classmethod
-    def test(cls, _input, _file_weigth, _max_clusters, _output="FULL"):
+    def test(cls, _params):
 
         clusters = {}
 

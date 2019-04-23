@@ -1,20 +1,21 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-version = '1.0.0'
 
 import time
 import sys
 
 from classes.Kohonen import Kohonen
 
+version = '1.0.0'
 
-def get_argument(_needle, _haystack):
 
+def get_argument(_needle, _haystack, _default=None):
     """
     Método responsável por obter o valor de um argumento
     :param _needle:         Nome do argumento
     :param _haystack:       Lista de argumentos
+    :param _default:        Valor padrão
     :return: mixed
     """
     try:
@@ -25,7 +26,7 @@ def get_argument(_needle, _haystack):
                 if pos > 0:
                     return _haystack[pos + 1]
 
-        return False
+        return _default if _default is not None else False
     except (ValueError, TypeError):
         return False
 
@@ -33,16 +34,18 @@ def get_argument(_needle, _haystack):
 if __name__ == "__main__":
 
     info_help = 'Parâmetros disponíveis: \r\n' \
-                   '\t -tr, --training             Sinaliza operação de treinamento \n' \
-                   '\t -ts, --test                 Sinaliza operação de teste \n' \
-                   '\t -h, --help                  Exibe o menu de ajuda \n' \
-                   '\t -v, --version               Exibe a versão do sistema \r\n\n' \
+                '\t -tr, --training             Sinaliza operação de treinamento \n' \
+                '\t -ts, --test                 Sinaliza operação de teste \n' \
+                '\t -h, --help                  Exibe o menu de ajuda \n' \
+                '\t -v, --version               Exibe a versão do sistema \r\n\n' \
                 'Treinamento: (--training)\r\n' \
-                   '\t -mi, --max_interaction      Número máximo de interações (Padrão: 2)\n' \
-                   '\t -mc, --max_clusters         Número máximo de grupos que serão definidos (Padrão: 2) \n' \
-                   '\t -lr, --learning_rate        Taixa de aprendizado (Padrão:0.98) \n' \
-                   '\t -de, --decrease             Decrementação (Padrão:True)\n' \
-                   '\t -nb, --neighborhood         Vizinhos mais próximos (Padrão:1) \n'
+                '\t -i, --input                 Endereço onde está o arquivo com os dados a serem processados\n' \
+                '\t -o, --output                Endereço onde será criado o arquivo com os resultados\n' \
+                '\t -mi, --max_interaction      Número máximo de interações (Padrão: 2)\n' \
+                '\t -mc, --max_clusters         Número máximo de grupos que serão definidos (Padrão: 2) \n' \
+                '\t -lr, --learning_rate        Taixa de aprendizado (Padrão:0.98) \n' \
+                '\t -de, --decrease             Decrementação (Padrão:True)\n' \
+                '\t -nb, --neighborhood         Vizinhos mais próximos (Padrão:1) \n'
 
     # Obtendo os parametros
     arguments = sys.argv
@@ -60,20 +63,26 @@ if __name__ == "__main__":
 
         if '-tr' in arguments or '--training' in arguments:
 
-            max_interaction = get_argument(['-mi', '--max_interaction'], arguments)
-            max_clusters = get_argument(['-mc', '--max_clusters'], arguments)
-            learning_rate = get_argument(['-lr', '--learning_rate'], arguments)
-            decrease = get_argument(['-de', '--decrease'], arguments)
-            neighborhood = get_argument(['-nb', '--neighborhood'], arguments)
+            params = {
+                'input': get_argument(['-i', '--input'], arguments, 'examples/input.json'),
+                'output': get_argument(['-o', '--output'], arguments, 'results/output.json'),
+                'max_interaction': get_argument(['-mi', '--max_interaction'], arguments, 2),
+                'max_clusters': get_argument(['-mc', '--max_clusters'], arguments, 2),
+                'learning_rate': get_argument(['-lr', '--learning_rate'], arguments, 0.98),
+                'decrease': get_argument(['-de', '--decrease'], arguments, True),
+                'neighborhood': get_argument(['-nb', '--neighborhood'], arguments, 1)
+            }
 
             print('Iniciando o treinamento [{}] ...'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
-            Kohonen.training(inputs, _max_clusters=3, _max_interactions=10, _neighborhood=1,
-                                            _learning_rate=0.98, _decrease=True, _output="KEYS")
+            Kohonen.training(params)
             print('Treinamento finalizado [{}] ...'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
             exit(0)
 
         if '-ts' in arguments or '--test' in arguments:
-            print('Test')
+            print('Iniciando os testes [{}] ...'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
+            Kohonen.test(params)
+            print('Testes finalizados [{}] ...'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
+            exit(0)
     else:
         print(help)
         exit(0)
