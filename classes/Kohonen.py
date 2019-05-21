@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import json
+import os
 import random
 
 from classes.Tools import Tools
@@ -13,11 +14,11 @@ class Kohonen:
     """
     input = {}
     weigths = []
-    decrease = True
-    neighborhood = 1
-    max_clusters = 2
-    max_interaction = 2
-    learning_rate = 0.98
+    output = None
+    max_clusters = None
+    neighborhood = None
+    learning_rate = None
+    max_interaction = None
 
     def __init__(self):
         pass
@@ -29,12 +30,18 @@ class Kohonen:
         :param _params:        Dicionário de dados
         :return:
         """
-
         print(_params)
+
+        # Definindo os atributos da classe a partir dos parametros informados
+        cls.decrease = _params['decrease']
+        cls.neighborhood = _params['neighborhood']
+        cls.max_clusters = _params['max_clusters']
+        cls.max_interaction = _params['max_interaction']
+        cls.learning_rate = _params['learning_rate']
+        cls.output = _params['output']
 
         # Convertendo os dados de entrada para uma lista de dados
         cls.input = Tools.format_data(_params['input'])
-
         print(cls.input)
 
         # Definindo a matriz de pesos
@@ -43,10 +50,11 @@ class Kohonen:
 
         print("\nMatriz de pesos:")
         print("--------------------------------------------------------")
-        for item in cls.weigths:
-            print(item)
+        for weigth in cls.weigths:
+            print(weigth)
         print("--------------------------------------------------------\n")
 
+        # Definindo variáveis do algoritmo
         count = 1
         clusters = {}
         value_decrease = round((cls.learning_rate / cls.max_interaction), 5)
@@ -55,80 +63,62 @@ class Kohonen:
         while count <= cls.max_interaction:
 
             print("######################## Interacao [{}] ##########################".format(count))
-            # print "Max Clusters: [{}] | Max Interacoes [{}] | Taxa de aprendizado [{}] | Raio: [{}]".format(
-            # max_clusters, _max_interactions, _learning_rate, _neighborhood)
+            print("Max Clusters: [{}] | Max Interacoes [{}] | Taxa de aprendizado [{}] | Raio: [{}]".format(
+                cls.max_clusters, cls.max_interaction, cls.learning_rate, cls.neighborhood))
 
+            # Zerando os clusters gerados
             clusters.clear()
 
-            for item in cls.input:
+            for item in cls.input.items():
 
-                # Dicionário da entrada
-                d = item
-                # Valor(lista) da entrada
-                x = list(x.values())[0]
+                # Definindo a chave e os valores de cada item
+                key = item[0]
+                values = item[1]
 
                 # Zerando a lista de distancias
                 distance = []
 
                 # Calculando a distância de cada neoronio de saída (número de cluster)
-                for y in range(_max_clusters):
+                for col in range(cls.max_clusters):
                     result = 0
-                    # print "\n--------------------------------------------------------"
-                    for z in range(len(x)):
-                        # print "Valor de x[{}] = [{}]".format(z, x[z])
-                        # print "Valor de w[{}][{}] = [{}]".format(z, y, cls.weigths[z][y])
-                        result += round((cls.weigths[z][y] - x[z]) ** 2, 2)
+                    print("\n--------------------------------------------------------")
+                    for row in range(len(values)):
+                        print("Valor do item na posição [{}] = [{}]".format(row, values[row]))
+                        print("Valor do peso de [{}][{}] = [{}]".format(row, col, cls.weigths[row][col]))
+                        result += round((cls.weigths[row][col] - values[row]) ** 2, 2)
 
                     distance.append(round(result, 2))
 
-                # print "\nValor das distancias: {}".format(distance)
+                # Verificando qual foi o neorônio vencedor após a aplicação da distância
+                print("\nValor das distancias: {}".format(distance))
                 winner_neuron = distance.index(min(distance))
-                # print "Neurônio vencedor: [{}] \n".format(winner_neuron)
+                print("Neurônio vencedor: [{}] \n".format(distance[winner_neuron]))
 
-                if clusters.get(winner_neuron) is not None:
-                    if _output == "FULL":
-                        clusters[winner_neuron].append(d)
-                    elif _output == "KEYS":
-                        clusters[winner_neuron].append(list(d.keys())[0])
-                    else:
-                        clusters[winner_neuron].append(list(d.values())[0])
-                else:
-                    if _output == "FULL":
-                        clusters[winner_neuron] = [d]
-                    elif _output == "KEYS":
-                        clusters[winner_neuron] = [list(d.keys())[0]]
-                    else:
-                        clusters[winner_neuron] = [list(d.values())[0]]
-
-                # print "Matriz de pesos:"
-                # print "--------------------------------------------------------"
-                # for item in cls.weigths:
-                #     print item
-                # print "--------------------------------------------------------\n"
+                print("\nMatriz de pesos:")
+                print("--------------------------------------------------------")
+                for weigth in cls.weigths:
+                    print(weigth)
+                print("--------------------------------------------------------\n")
 
                 # Atualizando os pesos
-                cls.update_weigths(x, winner_neuron, _neighborhood, _learning_rate, _max_clusters)
+                cls.update_weigths(values, winner_neuron)
 
+                # Definindo os grupos com seus items correspondentes
+                if clusters.get(winner_neuron) is not None:
+                    clusters[winner_neuron].append({key: values})
+                else:
+                    clusters[winner_neuron] = [{key: values}]
+
+            # Incrementando o contador de interações
             count = count + 1
 
             # Aplicando o decrésimo da taxa de aprendizado
-            if _decrease:
-                _learning_rate = round(_learning_rate - value_decrease, 5)
-            print("Valor da taxa de aprendizado [{}]\n".format(_learning_rate))
+            if cls.decrease:
+                cls.learning_rate = round(cls.learning_rate - value_decrease, 5)
 
-        f = open('./weigths_{}_{}_{}_{}_{}.txt'.format(
-            _max_clusters, _max_interactions, _neighborhood, _learning_rate, _decrease), 'w')
-
-        for item in cls.weigths:
-            f.write(json.dumps(item) + "\n")
+            print("Valor da taxa de aprendizado [{}]\n".format(cls.learning_rate))
 
         print("Meus Grupos: {}\n".format(list(clusters.keys())))
-
-        for item in clusters.items():
-            print(json.dumps(item))
-            f.write(json.dumps(item) + "\n")
-
-        f.close()
 
         return clusters
 
@@ -197,7 +187,7 @@ class Kohonen:
         """
         if cls.weigths is None or len(cls.weigths) <= 0:
 
-            print("Tamanho das entradas [{}]".format(len(cls.input.values())))
+            print("Quantidade de itens dos dados de entrada [{}]".format(len(cls.input.values())))
             cls.weigths = []
             items = []
             item_size = 0
@@ -222,7 +212,6 @@ class Kohonen:
 
                 # Número de linhas é igual ao tamanho do maior item
                 # Número de colunas é igual ao número de clusters
-                # TODO: Tentar deixar mais parecido com o real linhas e colunas
 
                 # Laço pelo número máximo de grupos
                 for col in range(cls.max_clusters):
@@ -230,12 +219,12 @@ class Kohonen:
                     # Laço pelo número máximo de items
                     for row in range(item_size):
 
-                        # Verificando se já existe a coluna na matriz
-                        if cls.check_key_exists(col) is False:
+                        # Verificando se já existe a linha na matriz
+                        if cls.check_key_exists(row) is False:
                             cls.weigths.append([])
 
                         # Defininfo mais um item para a coluna
-                        cls.weigths[col].append(round(random.uniform(min_input, max_input), 2))
+                        cls.weigths[row].append(round(random.uniform(min_input, max_input), 2))
 
             except (ValueError, TypeError, Exception) as e:
                 print('Ocorreu um erro ao identificar os dados de cada item. [{}] (sw-01) '.format(e))
@@ -244,39 +233,73 @@ class Kohonen:
         return True
 
     @classmethod
-    def update_weigths(cls, _x, _wn, _nh, _lr, _mc):
+    def update_weigths(cls, _item, _wn):
 
-        # Atualizando a matriz de pesos
-        for y in range(len(_x)):
+        # Laço por cada posição do item informado
+        for pos in range(len(_item)):
 
             # Verificando se foi informado o raio (vizinhanca)
-            if _nh is not None and _nh > 0:
+            if cls.neighborhood is not None and cls.neighborhood > 0:
 
                 # Verificando toda a vizinhanca
-                for n in range(1, _nh + 1):
+                for nh in range(1, cls.neighborhood + 1):
 
                     # Verificando se o indice saiu da faixa permitida [0...] e se existe a posição na matriz de pesos
-                    if (_wn - n) > -1 and cls.check_key_exists(y, _wn - n):
-                        # print "Vou atualizar o antecessor [{}]".format(cls.weigths[y][_wn - n])
-                        cls.weigths[y][_wn - n] = round(
-                            cls.weigths[y][_wn - n] + _lr * (_x[y] - cls.weigths[y][_wn - n]), 2)
+                    if (_wn - nh) > -1 and cls.check_key_exists(pos, _wn - nh):
 
-                    # Verificando se o indice saiu da faixa permitida [max_clusters] e
-                    # se existe a posição na matriz de pesos
-                    if (_wn - n) < _mc and cls.check_key_exists(y, _wn + n):
+                        # print "Vou atualizar o antecessor [{}]".format(cls.weigths[y][_wn - n])
+                        cls.weigths[pos][_wn - nh] = round(
+                            cls.weigths[pos][_wn - nh] + cls.learning_rate * (_item[pos] - cls.weigths[pos][_wn - nh]), 2)
+
+                    # Verificando se o indice saiu da faixa permitida [max_clusters]
+                    # e se existe a posição na matriz de pesos
+                    if (_wn - nh) < cls.max_clusters and cls.check_key_exists(pos, _wn + nh):
+
                         # print "Vou atualizar o predecessor [{}]".format(cls.weigths[y][_wn + n])
-                        cls.weigths[y][_wn + n] = round(
-                            cls.weigths[y][_wn + n] + _lr * (_x[y] - cls.weigths[y][_wn + n]), 2)
+                        cls.weigths[pos][_wn + nh] = round(
+                            cls.weigths[pos][_wn + nh] + cls.learning_rate * (_item[pos] - cls.weigths[pos][_wn + nh]), 2)
 
             # Atualizando os pesos do neuronio vencedor
-            cls.weigths[y][_wn] = round(cls.weigths[y][_wn] + _lr * (_x[y] - cls.weigths[y][_wn]), 2)
+            cls.weigths[pos][_wn] = round(cls.weigths[pos][_wn] + cls.learning_rate * (_item[pos] - cls.weigths[pos][_wn]), 2)
+
+        print("\nMatriz de pesos atualizada:")
+        print("--------------------------------------------------------")
+        for weigth in cls.weigths:
+            print(weigth)
+        print("--------------------------------------------------------\n")
 
         return True
 
     @classmethod
-    def check_key_exists(cls, _col, _row=None):
+    def check_key_exists(cls, _row, _col=None):
         try:
-            cls.weigths[_col] if _row is None else cls.weigths[_col][_row]
+            cls.weigths[_row] if _col is None else cls.weigths[_row][_col]
         except IndexError:
             return False
         return True
+
+    @classmethod
+    def write_output(cls, _clusters):
+
+        # Definindo o nome do diretório do arquivo de saída
+        dirname = os.path.dirname(cls.output)
+
+        # Verificando se o diretório existe, senão cria o mesmo
+        if not os.path.exists(dirname):
+            try:
+                os.makedirs(dirname)
+            except OSError as e:
+                print("Ocorreu um erro ao criar o diretório do arquivo de saída. [{}] (wo-01)".format(e))
+
+        # Escrevendo os dados dentro do arquivo de saída
+        f = open(cls.output, 'w')
+        for weigth in cls.weigths:
+            print(json.dumps(weigth))
+            f.write(json.dumps(weigth) + "\n")
+
+        for cluster in _clusters.items():
+            print(json.dumps(cluster))
+            f.write(json.dumps(cluster) + "\n")
+
+        f.close()
+
