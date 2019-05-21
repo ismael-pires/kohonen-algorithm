@@ -3,12 +3,15 @@
 import json
 import random
 
+from classes.Tools import Tools
+
 
 class Kohonen:
 
     """
 
     """
+    input = {}
     weigths = []
     decrease = True
     neighborhood = 1
@@ -28,10 +31,14 @@ class Kohonen:
         """
 
         print(_params)
-        exit(0)
+
+        # Convertendo os dados de entrada para uma lista de dados
+        cls.input = Tools.format_data(_params['input'])
+
+        print(cls.input)
 
         # Definindo a matriz de pesos
-        if cls.set_weigths(_params['input'], _params['max_clusters']):
+        if cls.set_weigths():
             print("Definição da matrix de pesos realizada com sucesso!")
 
         print("\nMatriz de pesos:")
@@ -42,10 +49,10 @@ class Kohonen:
 
         count = 1
         clusters = {}
-        _value_decrease = round((_learning_rate / _max_interactions), 5)
+        value_decrease = round((cls.learning_rate / cls.max_interaction), 5)
 
         # Verificando se já foi realizado o número máximo de interações
-        while count <= _max_interactions:
+        while count <= cls.max_interaction:
 
             print("######################## Interacao [{}] ##########################".format(count))
             # print "Max Clusters: [{}] | Max Interacoes [{}] | Taxa de aprendizado [{}] | Raio: [{}]".format(
@@ -53,10 +60,10 @@ class Kohonen:
 
             clusters.clear()
 
-            for x in _input:
+            for item in cls.input:
 
                 # Dicionário da entrada
-                d = x
+                d = item
                 # Valor(lista) da entrada
                 x = list(x.values())[0]
 
@@ -106,7 +113,7 @@ class Kohonen:
 
             # Aplicando o decrésimo da taxa de aprendizado
             if _decrease:
-                _learning_rate = round(_learning_rate - _value_decrease, 5)
+                _learning_rate = round(_learning_rate - value_decrease, 5)
             print("Valor da taxa de aprendizado [{}]\n".format(_learning_rate))
 
         f = open('./weigths_{}_{}_{}_{}_{}.txt'.format(
@@ -183,36 +190,56 @@ class Kohonen:
         return clusters
 
     @classmethod
-    def set_weigths(cls, _input, _max_clusters):
+    def set_weigths(cls):
         """
         Define a matriz de pesos de acordo com os valores das colunas
         Exemplo: Sorteia um valor entre o valor minimo e maximo de uma coluna
         """
         if cls.weigths is None or len(cls.weigths) <= 0:
-            # print "Tamanho das entradas [{}]".format(len(_input[0].values()[0]))
+
+            print("Tamanho das entradas [{}]".format(len(cls.input.values())))
             cls.weigths = []
+            items = []
+            item_size = 0
 
-            # Laço pelo número de colunas
-            for x in range(_max_clusters):
-                items = []
+            try:
 
-                # Definindo lista com os valores de cada coluna
-                for y in _input:
-                    for z in list(y.values())[0]:
-                        items.append(z)
+                # Definindo lista com os valores de cada item
+                for item in cls.input.values():
+
+                    # Definindo o tamanho do maior item informado
+                    item_size = len(item)
+
+                    # Lendo os valores de cada item
+                    for value in item:
+                        items.append(value)
 
                 # Definindo o valor minimo e maximo da coluna
-                min_input = (min(items) + 0.1) if min(items) >= 0 else (min(items) - 0.1)
-                max_input = (max(items) - 0.1) if max(items) > 0 else (max(items) + 0.1)
+                min_input = (min(items) + 0.1) if int(min(items)) >= 0 else (min(items) - 0.1)
+                max_input = (max(items) - 0.1) if int(max(items)) > 0 else (max(items) + 0.1)
 
-                # print "Valor minimo: [{}] | Valor maximo: [{}]".format(min_input, max_input)
+                print("Valor minimo: [{}] | Valor maximo: [{}]".format(min_input, max_input))
 
-                # Definindo a matriz de pesos por coluna
-                for z in range(len(list(_input[0].values())[0])):
-                    if cls.check_key_exists(z) is False:
-                        cls.weigths.append([])
+                # Número de linhas é igual ao tamanho do maior item
+                # Número de colunas é igual ao número de clusters
+                # TODO: Tentar deixar mais parecido com o real linhas e colunas
 
-                    cls.weigths[z].append(round(random.uniform(min_input, max_input), 2))
+                # Laço pelo número máximo de grupos
+                for col in range(cls.max_clusters):
+
+                    # Laço pelo número máximo de items
+                    for row in range(item_size):
+
+                        # Verificando se já existe a coluna na matriz
+                        if cls.check_key_exists(col) is False:
+                            cls.weigths.append([])
+
+                        # Defininfo mais um item para a coluna
+                        cls.weigths[col].append(round(random.uniform(min_input, max_input), 2))
+
+            except (ValueError, TypeError, Exception) as e:
+                print('Ocorreu um erro ao identificar os dados de cada item. [{}] (sw-01) '.format(e))
+                return False
 
         return True
 
@@ -247,9 +274,9 @@ class Kohonen:
         return True
 
     @classmethod
-    def check_key_exists(cls, _x, _y=None):
+    def check_key_exists(cls, _col, _row=None):
         try:
-            cls.weigths[_x] if _y is None else cls.weigths[_x][_y]
+            cls.weigths[_col] if _row is None else cls.weigths[_col][_row]
         except IndexError:
             return False
         return True

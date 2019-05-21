@@ -45,13 +45,14 @@ if __name__ == "__main__":
                 '\t -mc, --max_clusters         Número máximo de grupos que serão definidos (Padrão: 2) \n' \
                 '\t -lr, --learning_rate        Taixa de aprendizado (Padrão:0.98) \n' \
                 '\t -de, --decrease             Decrementação (Padrão:True)\n' \
-                '\t -nb, --neighborhood         Vizinhos mais próximos (Padrão:1) \n'
+                '\t -nb, --neighborhood         Vizinhos mais próximos (Padrão:1) \r\n\n' \
+                'Teste: (--test)\r\n'
 
     # Obtendo os parametros
     arguments = sys.argv
 
     # Verificando se foi informado algum parametro
-    if len(arguments) > 1:
+    if arguments is not None and len(arguments) > 1:
 
         if '-h' in arguments or '--help' in arguments:
             print(info_help)
@@ -64,8 +65,8 @@ if __name__ == "__main__":
         if '-tr' in arguments or '--training' in arguments:
 
             params = {
-                'input': get_argument(['-i', '--input'], arguments, 'examples/input.json'),
-                'output': get_argument(['-o', '--output'], arguments, 'results/output.json'),
+                'input': get_argument(['-i', '--input'], arguments, 'examples/binary.json'),
+                'output': get_argument(['-o', '--output'], arguments, 'results/binary.json'),
                 'max_interaction': get_argument(['-mi', '--max_interaction'], arguments, 2),
                 'max_clusters': get_argument(['-mc', '--max_clusters'], arguments, 2),
                 'learning_rate': get_argument(['-lr', '--learning_rate'], arguments, 0.98),
@@ -84,7 +85,7 @@ if __name__ == "__main__":
             print('Testes finalizados [{}] ...'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
             exit(0)
     else:
-        print(help)
+        print(info_help)
         exit(0)
 
         porcent = 1
