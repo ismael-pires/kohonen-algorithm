@@ -46,7 +46,10 @@ if __name__ == "__main__":
                 '\t -lr, --learning_rate        Taixa de aprendizado (Padrão:0.98) \n' \
                 '\t -de, --decrease             Decrementação (Padrão:True)\n' \
                 '\t -nb, --neighborhood         Vizinhos mais próximos (Padrão:1) \r\n\n' \
-                'Teste: (--test)\r\n'
+                'Teste: (--test)\r\n' \
+                '\t -i, --input                 Endereço onde está o arquivo com os dados a serem processados\n' \
+                '\t -w, --weight                Endereço onde foi criado o arquivo com os pesos\n' \
+                '\t -mc, --max_clusters         Número máximo de grupos que serão definidos (Padrão: 2) \n' \
 
     # Obtendo os parametros
     arguments = sys.argv
@@ -80,6 +83,13 @@ if __name__ == "__main__":
             exit(0)
 
         if '-ts' in arguments or '--test' in arguments:
+
+            params = {
+                'input': get_argument(['-i', '--input'], arguments, 'examples/binary.json'),
+                'weight': get_argument(['-w', '--weight'], arguments, 'results/binary.json'),
+                'max_clusters': int(get_argument(['-mc', '--max_clusters'], arguments, 2))
+            }
+
             print('Iniciando os testes [{}] ...'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
             Kohonen.test(params)
             print('Testes finalizados [{}] ...'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
@@ -92,18 +102,7 @@ if __name__ == "__main__":
 
         print(sys.argv)
 
-    # if 4 < len(sys.argv) and sys.argv[4] in ('-p', '--porcent'):
-    #         if 5 < len(sys.argv):
-    #             porcent = float(sys.argv[5])
-    #
-    #     # TREINAMENTO ##################################################################################################
-    #     print(time.strftime("%Y-%m-%d %H:%M:%S"))
-    #     clusters = Kohonen.training(inputs, _max_clusters=3, _max_interactions=10, _neighborhood=1,
-    #                                 _learning_rate=0.98, _decrease=True, _output="KEYS")
-    #     print(time.strftime("%Y-%m-%d %H:%M:%S"))
-    #
-    #     sys.exit(0)
-    #
+
     # elif len(sys.argv) > 1 and sys.argv[1] in ('-ts', '--test'):
     #
     #     inputs = weigth = None
