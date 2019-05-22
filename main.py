@@ -67,11 +67,11 @@ if __name__ == "__main__":
             params = {
                 'input': get_argument(['-i', '--input'], arguments, 'examples/binary.json'),
                 'output': get_argument(['-o', '--output'], arguments, 'results/binary.json'),
-                'max_interaction': get_argument(['-mi', '--max_interaction'], arguments, 2),
-                'max_clusters': get_argument(['-mc', '--max_clusters'], arguments, 2),
-                'learning_rate': get_argument(['-lr', '--learning_rate'], arguments, 0.98),
-                'decrease': get_argument(['-de', '--decrease'], arguments, True),
-                'neighborhood': get_argument(['-nb', '--neighborhood'], arguments, 1)
+                'max_interaction': int(get_argument(['-mi', '--max_interaction'], arguments, 2)),
+                'max_clusters': int(get_argument(['-mc', '--max_clusters'], arguments, 2)),
+                'learning_rate': float(get_argument(['-lr', '--learning_rate'], arguments, 0.98)),
+                'decrease': bool(get_argument(['-de', '--decrease'], arguments, True)),
+                'neighborhood': int(get_argument(['-nb', '--neighborhood'], arguments, 1))
             }
 
             print('Iniciando o treinamento [{}] ...'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
