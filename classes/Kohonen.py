@@ -272,7 +272,7 @@ class Kohonen:
         except (ValueError, TypeError, Exception) as e:
             print('Ocorreu um erro ao atualizar os pesos. [{}] (uw-01) '.format(e))
 
-        cls.show_weight_matrix('Matriz de pesos atualizada')
+        # cls.show_weight_matrix('Matriz de pesos atualizada')
         return True
 
     @classmethod
