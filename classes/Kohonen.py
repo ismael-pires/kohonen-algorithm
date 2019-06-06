@@ -308,7 +308,7 @@ class Kohonen:
                 os.makedirs(dirname)
 
             # Escrevendo os dados dentro do arquivo de saída
-            f = open(cls.output, 'w', encoding='utf8')
+            f = open(cls.output, 'w')
 
             result = {
                 'weights': cls.weights,

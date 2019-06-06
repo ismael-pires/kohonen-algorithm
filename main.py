@@ -85,7 +85,7 @@ if __name__ == "__main__":
         if '-ts' in arguments or '--test' in arguments:
 
             params = {
-                'input': get_argument(['-i', '--input'], arguments, 'examples/binary.json'),
+                'input': get_argument(['-i', '--input'], arguments, 'tests/binary.json'),
                 'weight': get_argument(['-w', '--weight'], arguments, 'results/binary.json'),
                 'max_clusters': int(get_argument(['-mc', '--max_clusters'], arguments, 2))
             }
