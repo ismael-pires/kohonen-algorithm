@@ -97,29 +97,3 @@ if __name__ == "__main__":
     else:
         print(info_help)
         exit(0)
-
-        porcent = 1
-
-        print(sys.argv)
-
-
-    # elif len(sys.argv) > 1 and sys.argv[1] in ('-ts', '--test'):
-    #
-    #     inputs = weigth = None
-    #
-    #     # TESTE ########################################################################################################
-    #
-    #     if sys.argv[4] in ('-w', '--weigth'):
-    #         weigth = str(sys.argv[5])
-    #
-    #     if inputs is not None:
-    #
-    #         print(time.strftime("%Y-%m-%d %H:%M:%S"))
-    #         clusters = Kohonen.test(inputs, weigth, _max_clusters=3, _output="KEYS")
-    #         print(time.strftime("%Y-%m-%d %H:%M:%S\n"))
-    #
-    #         print("Grupo da entrada: [{}]\n".format(list(clusters.keys())[0] + 1))
-    #
-    #     else:
-    #         print("Não possível identificar a entrada de teste")
-    #         exit(0)

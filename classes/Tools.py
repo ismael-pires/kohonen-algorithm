@@ -8,7 +8,8 @@ import os
 class Tools:
 
     """
-
+    Classe responsável por disponibilizar ferramentas mais utlizadas
+    Author: Ismael Pires
     """
 
     def __init__(self):

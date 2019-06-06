@@ -10,8 +10,10 @@ from classes.Tools import Tools
 class Kohonen:
 
     """
-
+    Classe responsável por executar os treinamentos e testes do algoritmo
+    Author: Ismael Pires
     """
+
     input = {}
     weights = []
     output = None
@@ -28,7 +30,7 @@ class Kohonen:
         """
         Método responsável pelo processamento do algoritmo de Kohonen
         :param dict _params:        Dicionário com os parametros informados
-        :return:
+        :return: boolean
         """
 
         # Definindo os atributos da classe a partir dos parametros informados
@@ -236,7 +238,7 @@ class Kohonen:
         Método responsável por atualizar a tabela (matriz) de pesos
         :param list _item:          Lista de dados
         :param int _wn:             Neurônio vencedor
-        :return:
+        :return: boolean
         """
 
         # cls.show_weight_matrix('Matriz de pesos antiga')
@@ -294,7 +296,7 @@ class Kohonen:
         """
         Método responsável por escrever os dados gerados pelo algoritmo em um arquivo
         :param dict _clusters:      Dicionário de grupos
-        :return:
+        :return: boolean
         """
 
         # Definindo o nome do diretório do arquivo de saída
@@ -326,7 +328,7 @@ class Kohonen:
         """
         Método responsável por imprimir na tela a matriz de pesos
         :param string _title:      Título da impressão
-        :return:
+        :return: boolean
         """
 
         print("\n{}".format(_title))
