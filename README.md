@@ -26,4 +26,4 @@ Algoritmo de Kohonen
 
 `./main.py -ts -i "tests/binary.json" -w "results/binary.json" -mc 2`
 
-# have fun :)
+## have fun :)
