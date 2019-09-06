@@ -8,7 +8,8 @@ import os
 class Tools:
 
     """
-
+    Classe responsável por disponibilizar ferramentas mais utlizadas
+    Author: Ismael Pires
     """
 
     def __init__(self):
@@ -47,7 +48,7 @@ class Tools:
             else:
                 return None
 
-        except (ValueError, TypeError, KeyboardInterrupt, Exception) as e:
+        except (AttributeError, ValueError, TypeError, KeyboardInterrupt, Exception) as e:
             print('Ocorreu um erro ao converter os dados. [{}] (fd-01)'.format(e))
             return None
 
